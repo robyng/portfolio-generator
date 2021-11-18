@@ -1,3 +1,7 @@
+const { writeFile, copyFile } = require('./utils/generate-site.js');
+const generateSite = require('./utils/generate-site.js');
+const generatePage = require('./src/page-template.js');
+
 const inquirer = require('inquirer')
 const promptUser = () => {
   return inquirer.prompt([
@@ -10,7 +14,7 @@ const promptUser = () => {
           return true;
 
         } else {
-          console.log ('Please enter your name.');
+          console.log('Please enter your name.');
           return false;
         }
       }
@@ -38,7 +42,7 @@ const promptUser = () => {
       type: 'input',
       name: 'about',
       message: 'Tell us about yourself',
-      when: ({confirmAbout}) => {
+      when: ({ confirmAbout }) => {
         if (confirmAbout) {
           return true;
         } else {
@@ -88,8 +92,8 @@ Add a New Project
           return false;
         }
 
-      }  
-      
+      }
+
     },
     {
       type: 'checkbox',
@@ -101,12 +105,12 @@ Add a New Project
     {
       type: 'input',
       name: 'link',
-      message: 'Enter deployed link to your project. (Required)'
+      message: 'Enter Github link to your project. (Required)'
     },
     {
       type: 'confirm',
       name: 'feature',
-      message: 'Would you like to festure this project?',
+      message: 'Would you like to feature this project?',
       default: false
     },
     {
@@ -128,66 +132,75 @@ Add a New Project
 };
 
 
-const fs = require('fs');
-const generatePage = require('./src/page-template.js');
+
+
 
 
 promptUser()
   .then(promptProject)
   .then(portfolioData => {
-    const pageHTML = generatePage(mockData); //pass portfolioData
+    return generatePage(portfolioData);
+  })
+  .then(pageHTML => {
+    return writeFile(pageHTML);
+  })
+  .then(writeFileResponse => {
+    console.log(writeFileResponse);
+    return copyFile();
+  })
+  .then(copyFileResponse => {
+    console.log(copyFileResponse);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 
-fs.writeFile('index.html', pageHTML, err => {
-  if (err) throw err;
-  console.log('Portfolio is complete! Checkout index.html to see the output!')
-});
-   })
 
 
-const mockData = {
-  name: 'robyn',
-  github: 'robyng',
-  projects: [],
-  about:
-    'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et.',
-  projects: [
-    {
-      name: 'Run Buddy',
-      description:
-        'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et. Nam fringilla elit dapibus pellentesque cursus.',
-      languages: ['HTML', 'CSS'],
-      link: 'https://github.com/lernantino/run-buddy',
-      feature: true,
-      confirmAddProject: true
-    },
-    {
-      name: 'Taskinator',
-      description:
-        'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et. Nam fringilla elit dapibus pellentesque cursus.',
-      languages: ['JavaScript', 'HTML', 'CSS'],
-      link: 'https://github.com/lernantino/taskinator',
-      feature: true,
-      confirmAddProject: true
-    },
-    {
-      name: 'Taskmaster Pro',
-      description:
-        'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et. Nam fringilla elit dapibus pellentesque cursus.',
-      languages: ['JavaScript', 'jQuery', 'CSS', 'HTML', 'Bootstrap'],
-      link: 'https://github.com/lernantino/taskmaster-pro',
-      feature: false,
-      confirmAddProject: true
-    },
-    {
-      name: 'Robot Gladiators',
-      description:
-        'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque.',
-      languages: ['JavaScript'],
-      link: 'https://github.com/lernantino/robot-gladiators',
-      feature: false,
-      confirmAddProject: false
-    }
-  ]
-}
+// const mockData = {
+//   name: 'robyn',
+//   github: 'robyng',
+//   projects: [],
+//   about:
+//     'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et.',
+//   projects: [
+//     {
+//       name: 'Run Buddy',
+//       description:
+//         'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et. Nam fringilla elit dapibus pellentesque cursus.',
+//       languages: ['HTML', 'CSS'],
+//       link: 'https://github.com/lernantino/run-buddy',
+//       feature: true,
+//       confirmAddProject: true
+//     },
+//     {
+//       name: 'Taskinator',
+//       description:
+//         'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et. Nam fringilla elit dapibus pellentesque cursus.',
+//       languages: ['JavaScript', 'HTML', 'CSS'],
+//       link: 'https://github.com/lernantino/taskinator',
+//       feature: true,
+//       confirmAddProject: true
+//     },
+//     {
+//       name: 'Taskmaster Pro',
+//       description:
+//         'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et. Nam fringilla elit dapibus pellentesque cursus.',
+//       languages: ['JavaScript', 'jQuery', 'CSS', 'HTML', 'Bootstrap'],
+//       link: 'https://github.com/lernantino/taskmaster-pro',
+//       feature: false,
+//       confirmAddProject: true
+//     },
+//     {
+//       name: 'Robot Gladiators',
+//       description:
+//         'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque.',
+//       languages: ['JavaScript'],
+//       link: 'https://github.com/lernantino/robot-gladiators',
+//       feature: false,
+//       confirmAddProject: false
+//     }
+//   ]
+// }
 
 
